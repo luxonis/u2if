@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
+set(PICO_NO_FLASH 1)
+set(PICO_COPY_TO_RAM 0)
+
 # Set PICO_SDK_PATH to parent directory
 get_filename_component(PICO_SDK_PATH "${CMAKE_CURRENT_LIST_DIR}/../pico-sdk" ABSOLUTE)
 
@@ -14,6 +17,8 @@ pico_sdk_init()
 
 
 set(BOARD "PICO" CACHE STRING "BaseName chosen by the user at CMake configure time")
+set(LOG 2)
+set(DEBUG 1)
 set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY)
 message(STATUS "Selected board:'${BOARD}'")
 
@@ -60,7 +65,8 @@ add_executable(u2if
 	${InterfaceSources}
         )
 
-
+pico_set_binary_type(u2if no_flash)
+pico_set_linker_script(u2if /home/pi/pico/u2if/firmware/pico-sdk/src/rp2_common/pico_standard_link/memmap_no_flash.ld)
 # generate the header file into the source tree as it is included in the RP2040 datasheet
 pico_generate_pio_header(u2if ${CMAKE_CURRENT_LIST_DIR}/interfaces/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
 pico_generate_pio_header(u2if ${CMAKE_CURRENT_LIST_DIR}/interfaces/audio_i2s.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
@@ -72,8 +78,8 @@ target_link_libraries(u2if PRIVATE pico_stdlib pico_unique_id tinyusb_device tin
 hardware_i2c hardware_watchdog hardware_pwm hardware_adc hardware_spi
 hardware_pio hardware_dma pico_sync pico_multicore)
 
-pico_enable_stdio_usb(u2if 0)
-pico_enable_stdio_uart(u2if 0) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
+# pico_enable_stdio_usb(u2if 1)
+pico_enable_stdio_uart(u2if 1) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
 
 pico_add_extra_outputs(u2if)
 

@@ -139,6 +139,7 @@ int main(void) {
     tusb_init();
 
     while (1) {
+        printf("LOOP\n");
         tud_task(); // tinyusb device task
         static uint8_t response[HID_RESPONSE_SIZE];
         for (uint8_t index = 0; index < static_cast<uint8_t>(interfaces.size()); index++) {
