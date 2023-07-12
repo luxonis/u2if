@@ -131,7 +131,7 @@ static const uint TX_REPORT_QUEUE_SIZE = 20;
 // Main loop function
 //--------------------------------------------------------------------+
 int main(void) {
-    //stdio_init_all(); // to debug with printf (set pico_enable_stdio_uart(u2if 1) in CMakeLists) Caution, it is UART0.
+    // stdio_init_all(); // to debug with printf (set pico_enable_stdio_uart(u2if 1) in CMakeLists) Caution, it is UART0.
 
     modeActivity.init();
 
@@ -139,7 +139,7 @@ int main(void) {
     tusb_init();
 
     while (1) {
-        printf("LOOP\n");
+        // printf("LOOP\n");
         tud_task(); // tinyusb device task
         static uint8_t response[HID_RESPONSE_SIZE];
         for (uint8_t index = 0; index < static_cast<uint8_t>(interfaces.size()); index++) {

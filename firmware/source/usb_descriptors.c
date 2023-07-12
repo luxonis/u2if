@@ -195,8 +195,10 @@ uint16_t const *tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
         memcpy(&_desc_str[1], string_desc_arr[0], 2);
         chr_count = 1;
     } else if (index == 3) {
-        pico_unique_board_id_t board_id;
-        pico_get_unique_board_id(&board_id);
+        pico_unique_board_id_t board_id = {
+          .id = 0x1
+        };
+        // pico_get_unique_board_id(&board_id);
         chr_count = 0;
         _desc_str[1 + chr_count++] = '0';
         _desc_str[1 + chr_count++] = 'x';
