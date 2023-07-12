@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
+
+add_compile_definitions(PICO_FLASH_SPI_CLKDIV=4)
 set(PICO_DEFAULT_BOOT_STAGE2_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../pico-sdk/src/rp2_common/boot_stage2/boot2_generic_03h.S)
 
 
