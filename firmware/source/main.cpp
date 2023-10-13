@@ -151,7 +151,7 @@ void voltage_select_1v8()
 //--------------------------------------------------------------------+
 int main(void)
 {
-    // stdio_init_all(); // to debug with printf (set pico_enable_stdio_uart(u2if 1) in CMakeLists) Caution, it is UART0.
+    stdio_init_all(); // to debug with printf (set pico_enable_stdio_uart(u2if 1) in CMakeLists) Caution, it is UART0.
 
 #ifdef PICO_1V8
     voltage_select_1v8();

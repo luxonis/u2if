@@ -10,6 +10,7 @@ if(IS_1V8)
         add_compile_definitions(PICO_1V8=1)
         set(BUILD_NAME "u2if_1v8")
 else ()
+        set(BUILD_NAME "u2if_3v3")
         message(STATUS "Configuring for 3V3 board")
 endif()
 
@@ -33,8 +34,7 @@ project(${BUILD_NAME} VERSION "0.6.0")
 # initialize the Pico SDK
 pico_sdk_init()
 
-
-set(BOARD "PICO" CACHE STRING "BaseName chosen by the user at CMake configure time")
+set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
 set(LOG 2)
 set(DEBUG 1)
 set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY)
@@ -100,7 +100,7 @@ hardware_i2c hardware_watchdog hardware_pwm hardware_adc hardware_spi
 hardware_pio hardware_dma pico_sync pico_multicore)
 
 # pico_enable_stdio_usb(${BUILD_NAME} 1)
-# pico_enable_stdio_uart(${BUILD_NAME} 1) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
+pico_enable_stdio_uart(${BUILD_NAME} 1) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
 
 pico_add_extra_outputs(${BUILD_NAME})
 
