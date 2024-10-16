@@ -59,7 +59,7 @@
   #define USB_PRD "QT2040 Trinkey U2IF"
   #define USB_VID 0x239A
   #define USB_PID 0x0109
-#elif BOARD == PICO
+#elif BOARD == PICO || BOARD == CUSTOM
   #define USB_MFG "Pico"
   #define USB_PRD "U2IF"
   #define USB_VID 0xCAFE

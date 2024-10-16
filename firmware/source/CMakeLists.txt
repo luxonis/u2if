@@ -1,5 +1,27 @@
 cmake_minimum_required(VERSION 3.12)
 
+option(IS_1V8 "Are you compiling for a 1V8 board?" OFF)
+
+set(BUILD_NAME "u2if")
+add_compile_definitions(PICO_FLASH_SPI_CLKDIV=4)
+
+if(IS_1V8)
+        message(WARNING "IS_1V8=ON, Configuring for 1V8 board - Caution if your board is not 1V8, you may damage it!")
+        add_compile_definitions(PICO_1V8=1)
+        set(BUILD_NAME "u2if_1v8")
+else ()
+        set(BUILD_NAME "u2if_3v3")
+        message(STATUS "Configuring for 3V3 board")
+endif()
+
+set(PICO_DEFAULT_BOOT_STAGE2_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../pico-sdk/src/rp2_common/boot_stage2/boot2_generic_03h.S)
+
+
+# If you want to flash directly to RAM
+# NOTE: Didn't boot for me - didn't debug too much
+# set(PICO_NO_FLASH 1)
+# set(PICO_COPY_TO_RAM 0)
+
 # Set PICO_SDK_PATH to parent directory
 get_filename_component(PICO_SDK_PATH "${CMAKE_CURRENT_LIST_DIR}/../pico-sdk" ABSOLUTE)
 
@@ -7,13 +29,14 @@ get_filename_component(PICO_SDK_PATH "${CMAKE_CURRENT_LIST_DIR}/../pico-sdk" ABS
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
-project(u2if VERSION "0.6.0")
+project(${BUILD_NAME} VERSION "0.6.0")
 
 # initialize the Pico SDK
 pico_sdk_init()
 
-
-set(BOARD "PICO" CACHE STRING "BaseName chosen by the user at CMake configure time")
+set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
+set(LOG 2)
+set(DEBUG 1)
 set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY)
 message(STATUS "Selected board:'${BOARD}'")
 
@@ -53,29 +76,33 @@ configure_file("${PROJECT_SOURCE_DIR}/board_config.h.in" "${PROJECT_SOURCE_DIR}/
 
 FILE(GLOB InterfaceSources interfaces/*.cpp)
 
-add_executable(u2if
+add_executable(${BUILD_NAME}
         main.cpp
         usb_descriptors.c
 	ModeActivity.cpp
 	${InterfaceSources}
         )
 
+# If you want to flash directly to RAM
+# NOTE: Didn't boot for me - didn't debug too much
+# pico_set_binary_type(u2if no_flash)
+# pico_set_linker_script(u2if /home/pi/pico/u2if/firmware/pico-sdk/src/rp2_common/pico_standard_link/memmap_no_flash.ld)
 
 # generate the header file into the source tree as it is included in the RP2040 datasheet
-pico_generate_pio_header(u2if ${CMAKE_CURRENT_LIST_DIR}/interfaces/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
-pico_generate_pio_header(u2if ${CMAKE_CURRENT_LIST_DIR}/interfaces/audio_i2s.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
-pico_generate_pio_header(u2if ${CMAKE_CURRENT_LIST_DIR}/interfaces/hub75.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
+pico_generate_pio_header(${BUILD_NAME} ${CMAKE_CURRENT_LIST_DIR}/interfaces/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
+pico_generate_pio_header(${BUILD_NAME} ${CMAKE_CURRENT_LIST_DIR}/interfaces/audio_i2s.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
+pico_generate_pio_header(${BUILD_NAME} ${CMAKE_CURRENT_LIST_DIR}/interfaces/hub75.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
 
-target_include_directories(u2if PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${BUILD_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
-target_link_libraries(u2if PRIVATE pico_stdlib pico_unique_id tinyusb_device tinyusb_board 
+target_link_libraries(${BUILD_NAME} PRIVATE pico_stdlib pico_unique_id tinyusb_device tinyusb_board 
 hardware_i2c hardware_watchdog hardware_pwm hardware_adc hardware_spi
 hardware_pio hardware_dma pico_sync pico_multicore)
 
-pico_enable_stdio_usb(u2if 0)
-pico_enable_stdio_uart(u2if 0) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
+# pico_enable_stdio_usb(${BUILD_NAME} 1)
+pico_enable_stdio_uart(${BUILD_NAME} 1) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
 
-pico_add_extra_outputs(u2if)
+pico_add_extra_outputs(${BUILD_NAME})
 
 # add url via pico_set_program_url
-#example_auto_set_url(u2if)
+#example_auto_set_url(${BUILD_NAME})

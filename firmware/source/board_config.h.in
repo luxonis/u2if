@@ -13,6 +13,7 @@
 #define ITSYBITSY       3
 #define QTPY            4
 #define QT2040_TRINKEY  5
+#define CUSTOM          6
 
 #define BOARD ${BOARD}
 
@@ -139,6 +140,43 @@
   #define I2C0_ENABLED 1
   #define U2IF_I2C0_SDA 4
   #define U2IF_I2C0_SCL 5
+  // I2C1
+  #define I2C1_ENABLED 1
+  #define U2IF_I2C1_SDA 14
+  #define U2IF_I2C1_SCL 15
+  // SPI0
+  #define SPI0_ENABLED 1
+  #define U2IF_SPI0_CK 18
+  #define U2IF_SPI0_MOSI 19
+  #define U2IF_SPI0_MISO 16
+  // SPI1
+  #define SPI1_ENABLED 1
+  #define U2IF_SPI1_CK 10
+  #define U2IF_SPI1_MOSI 11
+  #define U2IF_SPI1_MISO 12
+  // UART0
+  #define UART0_ENABLED 1
+  #define U2IF_UART0_TX 0
+  #define U2IF_UART0_RX 1
+  // UART1
+  #define UART1_ENABLED 1
+  #define U2IF_UART1_TX 8
+  #define U2IF_UART1_RX 9
+  // I2S
+  #define I2S_ENABLED  I2S_ALLOW
+  #define U2IF_I2S_CLK 10
+  #define U2IF_I2S_WS  11
+  #define U2IF_I2S_SD  12
+  // HUB75
+  #define HUB75_ENABLED  HUB75_ALLOW
+//---------------------------------------------------------
+// CUSTOM (default)
+//---------------------------------------------------------
+#elif BOARD == CUSTOM
+  // I2C0
+  #define I2C0_ENABLED 1
+  #define U2IF_I2C0_SDA 24
+  #define U2IF_I2C0_SCL 25
   // I2C1
   #define I2C1_ENABLED 1
   #define U2IF_I2C1_SDA 14
