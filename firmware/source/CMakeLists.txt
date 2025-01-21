@@ -3,18 +3,23 @@ cmake_minimum_required(VERSION 3.12)
 option(IS_1V8 "Are you compiling for a 1V8 board?" OFF)
 
 set(BUILD_NAME "u2if")
+
+# Following two lines needed to make W25Q128 1V8 flash working
+# First we need to prescale SPI frequency by factor 4 to mitigate flash read errors
 add_compile_definitions(PICO_FLASH_SPI_CLKDIV=4)
+
+# Second stage bootloader needs to be changed because our flash is qualified as "generic" flash which uses 0x3h command to read data
+set(PICO_DEFAULT_BOOT_STAGE2_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../pico-sdk/src/rp2_common/boot_stage2/boot2_generic_03h.S)
 
 if(IS_1V8)
         message(WARNING "IS_1V8=ON, Configuring for 1V8 board - Caution if your board is not 1V8, you may damage it!")
         add_compile_definitions(PICO_1V8=1)
-        set(BUILD_NAME "u2if_1v8")
+        set(BUILD_NAME "u2if_${BOARD}")
 else ()
-        set(BUILD_NAME "u2if_3v3")
+        set(BUILD_NAME "u2if_${BOARD}")
         message(STATUS "Configuring for 3V3 board")
 endif()
 
-set(PICO_DEFAULT_BOOT_STAGE2_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../pico-sdk/src/rp2_common/boot_stage2/boot2_generic_03h.S)
 
 
 # If you want to flash directly to RAM
@@ -34,7 +39,7 @@ project(${BUILD_NAME} VERSION "0.6.0")
 # initialize the Pico SDK
 pico_sdk_init()
 
-set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
+#set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
 set(LOG 2)
 set(DEBUG 1)
 set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY)
