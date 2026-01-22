@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2019 Ha Thach (tinyusb.org)
@@ -65,6 +65,12 @@
   #define USB_VID 0xCAFE
   #define USB_PID           (0x4000 | _PID_MAP(CDC, 0) | _PID_MAP(MSC, 1) | _PID_MAP(HID, 2) | \
                             _PID_MAP(MIDI, 3) | _PID_MAP(VENDOR, 4) )
+#elif BOARD == MD6976_R0
+  #define USB_MFG "Luxonis"
+  #define USB_PRD "M8 Controller Box"
+  #define USB_VID 0xCAFE
+  #define USB_PID           (0x4000 | _PID_MAP(CDC, 0) | _PID_MAP(MSC, 1) | _PID_MAP(HID, 2) | \
+                            _PID_MAP(MIDI, 3) | _PID_MAP(VENDOR, 4) )
 #else
   #warning "Please define board type"
 #endif
@@ -84,7 +90,7 @@ tusb_desc_device_t const desc_device =
                 .bDeviceClass       = TUSB_CLASS_MISC,
                 .bDeviceSubClass    = MISC_SUBCLASS_COMMON,
                 .bDeviceProtocol    = MISC_PROTOCOL_IAD,
-                
+
                 .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
 
                 .idVendor           = USB_VID,

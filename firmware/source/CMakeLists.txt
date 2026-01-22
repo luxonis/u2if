@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
 option(IS_1V8 "Are you compiling for a 1V8 board?" OFF)
+option(ENABLE_STDIO_USB OFF)
+option(ENABLE_STDIO_UART OFF)
 
 set(BUILD_NAME "u2if")
 
@@ -39,10 +41,8 @@ project(${BUILD_NAME} VERSION "0.6.0")
 # initialize the Pico SDK
 pico_sdk_init()
 
-#set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
-set(LOG 2)
-set(DEBUG 1)
-set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY)
+set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
+set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY MD6976_R0)
 message(STATUS "Selected board:'${BOARD}'")
 
 # might help for feather?
@@ -77,7 +77,7 @@ if (NOT DEFINED HUB75_MAX_LEDS)
 endif()
 
 
-configure_file("${PROJECT_SOURCE_DIR}/board_config.h.in" "${PROJECT_SOURCE_DIR}/board_config.h")
+configure_file("${PROJECT_SOURCE_DIR}/board_config.h.in" "include/board_config.h")
 
 FILE(GLOB InterfaceSources interfaces/*.cpp)
 
@@ -99,15 +99,20 @@ pico_generate_pio_header(${BUILD_NAME} ${CMAKE_CURRENT_LIST_DIR}/interfaces/audi
 pico_generate_pio_header(${BUILD_NAME} ${CMAKE_CURRENT_LIST_DIR}/interfaces/hub75.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/interfaces/)
 
 target_include_directories(${BUILD_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${BUILD_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-target_link_libraries(${BUILD_NAME} PRIVATE pico_stdlib pico_unique_id tinyusb_device tinyusb_board 
+target_link_libraries(${BUILD_NAME} PRIVATE pico_stdlib pico_unique_id tinyusb_device tinyusb_board
 hardware_i2c hardware_watchdog hardware_pwm hardware_adc hardware_spi
 hardware_pio hardware_dma pico_sync pico_multicore)
 
-# pico_enable_stdio_usb(${BUILD_NAME} 1)
-pico_enable_stdio_uart(${BUILD_NAME} 1) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
+pico_enable_stdio_usb(${BUILD_NAME} ${ENABLE_STDIO_USB})
+pico_enable_stdio_uart(${BUILD_NAME} ${ENABLE_STDIO_UART}) # Set to 1, call stdio_init_all(); to make printf for debugging puroposes
 
 pico_add_extra_outputs(${BUILD_NAME})
 
 # add url via pico_set_program_url
 #example_auto_set_url(${BUILD_NAME})
+
+add_subdirectory(pca9555)
+
+target_link_libraries(${BUILD_NAME} PRIVATE PCA9555)

@@ -16,6 +16,7 @@
 #define CUSTOM_1V8      6
 #define CUSTOM_3V3      7
 #define SL6945_1V8      8
+#define MD6976_R0       9
 
 #define BOARD ${BOARD}
 
@@ -28,8 +29,11 @@
 #define WS2812_SIZE         ${WS2812_SIZE}      // 0 to disable WS2812B interface
 #define HUB75_MAX_LEDS      ${HUB75_MAX_LEDS}
 
+#define ENABLE_STDIO_UART ${ENABLE_STDIO_UART}
+#define ENABLE_STDIO_USB ${ENABLE_STDIO_USB}
+
 //---------------------------------------------------------
-// Feather 
+// Feather
 //---------------------------------------------------------
 #if BOARD == FEATHER
   // I2C0
@@ -245,7 +249,56 @@
   #define U2IF_I2S_SD  12
   // HUB75
   #define HUB75_ENABLED  HUB75_ALLOW
-  
+
+#elif BOARD == MD6976_R0
+  // I2C0
+  #define I2C0_ENABLED 0
+  #define U2IF_I2C0_SDA 22
+  #define U2IF_I2C0_SCL 23
+  // I2C1
+  #define I2C1_ENABLED 0
+  #define U2IF_I2C1_SDA 99
+  #define U2IF_I2C1_SCL 99
+  // SPI0
+  #define SPI0_ENABLED 0
+  #define U2IF_SPI0_CK 6
+  #define U2IF_SPI0_MOSI 3
+  #define U2IF_SPI0_MISO 4
+  // SPI1
+  #define SPI1_ENABLED 0
+  #define U2IF_SPI1_CK 10
+  #define U2IF_SPI1_MOSI 11
+  #define U2IF_SPI1_MISO 12
+  // UART0
+  #define UART0_ENABLED 0
+  #define U2IF_UART0_TX 0
+  #define U2IF_UART0_RX 1
+  // UART1
+  #define UART1_ENABLED 1
+  #define U2IF_UART1_TX 24
+  #define U2IF_UART1_RX 25
+  // I2S
+  #define I2S_ENABLED  0
+  #define U2IF_I2S_CLK 10
+  #define U2IF_I2S_WS  11
+  #define U2IF_I2S_SD  12
+  // HUB75
+  #define HUB75_ENABLED  0
+  // PCA955 GPIO Expander 0
+  #define PCA9555_0_ENABLED 1
+  #define PCA9555_0_I2C_INSTANCE 1
+  #define PCA9555_0_I2C_SDA_GPIO 22
+  #define PCA9555_0_I2C_SCL_GPIO 23
+  #define PCA9555_0_I2C_ADDRESS 0x20
+  #define PCA9555_0_INT_GPIO 0 // 0 to disable interrupt mode
+  // PCA955 GPIO Expander 1
+  #define PCA9555_1_ENABLED 1
+  #define PCA9555_1_I2C_INSTANCE 1
+  #define PCA9555_1_I2C_SDA_GPIO 22
+  #define PCA9555_1_I2C_SCL_GPIO 23
+  #define PCA9555_1_I2C_ADDRESS 0x21
+  #define PCA9555_1_INT_GPIO 0 // 0 to disable interrupt mode
+
 #else
   #warning "Please define board type"
 #endif

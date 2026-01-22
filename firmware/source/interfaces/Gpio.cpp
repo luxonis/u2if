@@ -10,6 +10,10 @@ static uint8_t irqEventBuffer[MAX_BUFFERED_EVENT];
 static volatile uint8_t irqEventBufferCount = 0;
 static critical_section_t critSec;
 
+// Expander variables
+static const uint8_t EXP0_BANK_OFFSET = 32;
+static const uint8_t EXP1_BANK_OFFSET = 64;
+
 // Debouncer variables
 const uint8_t MAX_PINS = 30;
 const uint8_t DEBOUNCE_PERIODS_MS = 1;
@@ -89,6 +93,21 @@ Gpio::Gpio() {
     setInterfaceState(InterfaceState::INTIALIZED);
     critical_section_init(&critSec);
     add_repeating_timer_us(-DEBOUNCE_PERIODS_MS * 1000, debounceInput, NULL, &_debounceTimer);
+
+#ifdef PCA9555_0_ENABLED
+    i2c_init((PCA9555_0_I2C_INSTANCE == 0 ? i2c0 : i2c1), 100 * 1000);
+    gpio_set_function(PCA9555_0_I2C_SDA_GPIO, GPIO_FUNC_I2C);
+    gpio_set_function(PCA9555_0_I2C_SCL_GPIO, GPIO_FUNC_I2C);
+    gpio_pull_up(PCA9555_0_I2C_SDA_GPIO);
+    gpio_pull_up(PCA9555_0_I2C_SCL_GPIO);
+#endif
+#ifdef PCA9555_1_ENABLED
+    i2c_init((PCA9555_1_I2C_INSTANCE == 0 ? i2c0 : i2c1), 100 * 1000);
+    gpio_set_function(PCA9555_1_I2C_SDA_GPIO, GPIO_FUNC_I2C);
+    gpio_set_function(PCA9555_1_I2C_SCL_GPIO, GPIO_FUNC_I2C);
+    gpio_pull_up(PCA9555_1_I2C_SDA_GPIO);
+    gpio_pull_up(PCA9555_1_I2C_SCL_GPIO);
+#endif
 }
 
 Gpio::~Gpio() {
@@ -119,8 +138,7 @@ CmdStatus Gpio::task(uint8_t response[64]) {
     return status;
 }
 
-
-CmdStatus Gpio::initPin(uint8_t const *cmd) {
+CmdStatus Gpio::initPinGpio(uint8_t const *cmd) {
     const uint gp = cmd[1];
     const uint dir = cmd[2] == 0 ? GPIO_IN : GPIO_OUT;
     gpio_init(gp);
@@ -137,10 +155,86 @@ CmdStatus Gpio::initPin(uint8_t const *cmd) {
     return CmdStatus::OK;
 }
 
-CmdStatus Gpio::setPin(uint8_t const *cmd) {
+
+CmdStatus Gpio::initPinExp(uint8_t const *cmd) {
+    const uint gp = cmd[1];
+
+    if(gp < EXP1_BANK_OFFSET) {
+    #ifdef PCA9555_0_ENABLED
+        const uint exp0_pin = gp - EXP0_BANK_OFFSET;
+        const uint dir = cmd[2] == 0 ? GPIO_IN : GPIO_OUT;
+
+        // Only direction is supported, PU/PD is not
+        if(dir == GPIO_IN) {
+            exp0.set_pin_mode(exp0_pin, 1);
+        } else {
+            exp0.set_pin_mode(exp0_pin, 0);
+        }
+    #endif
+    } else {
+    #ifdef PCA9555_1_ENABLED
+        const uint exp1_pin = gp - EXP1_BANK_OFFSET;
+        const uint dir = cmd[2] == 0 ? GPIO_IN : GPIO_OUT;
+
+        // Only direction is supported, PU/PD is not
+        if(dir == GPIO_IN) {
+            exp1.set_pin_mode(exp1_pin, 1);
+        } else {
+            exp1.set_pin_mode(exp1_pin, 0);
+        }
+    #endif
+    }
+
+    return CmdStatus::OK;
+}
+
+
+CmdStatus Gpio::initPin(uint8_t const *cmd) {
+    const uint gp = cmd[1];
+
+    // Which GPIO block
+    if(gp < EXP0_BANK_OFFSET) {
+        return initPinGpio(cmd);
+    } else {
+        return initPinExp(cmd);
+    }
+
+    return CmdStatus::OK;
+}
+
+CmdStatus Gpio::setPinGpio(uint8_t const *cmd) {
     const uint gp = cmd[1];
     bool value = cmd[2] == 0 ? false : true;
     gpio_put(gp, value);
+    return CmdStatus::OK;
+}
+
+CmdStatus Gpio::setPinExp(uint8_t const *cmd) {
+    const uint gp = cmd[1];
+
+    if(gp < EXP1_BANK_OFFSET) {
+    #ifdef PCA9555_0_ENABLED
+        const int exp0_pin = gp - EXP0_BANK_OFFSET;
+        exp0.set_pin_value(exp0_pin, cmd[2]);
+    #endif
+    } else {
+    #ifdef PCA9555_1_ENABLED
+        const int exp1_pin = gp - EXP1_BANK_OFFSET;
+        exp1.set_pin_value(exp1_pin, cmd[2]);
+    #endif
+    }
+
+    return CmdStatus::OK;
+}
+
+CmdStatus Gpio::setPin(uint8_t const *cmd) {
+    const uint gp = cmd[1];
+    if(gp < EXP0_BANK_OFFSET) {
+        return setPinGpio(cmd);
+    } else {
+        return setPinExp(cmd);
+    }
+
     return CmdStatus::OK;
 }
 
