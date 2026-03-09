@@ -252,7 +252,7 @@
 
 #elif BOARD == MD6976_R0
   // I2C0
-  #define I2C0_ENABLED 0
+  #define I2C0_ENABLED 1
   #define U2IF_I2C0_SDA 22
   #define U2IF_I2C0_SCL 23
   // I2C1
@@ -289,14 +289,14 @@
   #define PCA9555_0_I2C_INSTANCE 1
   #define PCA9555_0_I2C_SDA_GPIO 22
   #define PCA9555_0_I2C_SCL_GPIO 23
-  #define PCA9555_0_I2C_ADDRESS 0x20
+  #define PCA9555_0_I2C_ADDRESS 0x21
   #define PCA9555_0_INT_GPIO 0 // 0 to disable interrupt mode
   // PCA955 GPIO Expander 1
   #define PCA9555_1_ENABLED 1
   #define PCA9555_1_I2C_INSTANCE 1
   #define PCA9555_1_I2C_SDA_GPIO 22
   #define PCA9555_1_I2C_SCL_GPIO 23
-  #define PCA9555_1_I2C_ADDRESS 0x21
+  #define PCA9555_1_I2C_ADDRESS 0x24
   #define PCA9555_1_INT_GPIO 0 // 0 to disable interrupt mode
 
 #else

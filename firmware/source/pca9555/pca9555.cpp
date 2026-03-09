@@ -46,7 +46,7 @@ void pca9555::pin_mode(config_ports_t *config_ports)
 void pca9555::set_output(output_ports_t *output_ports)
 {
   uint8_t reg_config[2] = {output_ports->config_port0.all, output_ports->config_port1.all};
-  twi_write(this->address, cp_0, reg_config, 2);
+  twi_write(this->address, op_0, reg_config, 2);
   read_input();
 }
 
@@ -73,7 +73,7 @@ void pca9555::set_pin_value(uint8_t pin, uint8_t value) {
   } else {
     op01reg &= ~(1<<pin);
   }
-  twi_write(this->address, cp_0, (uint8_t*) &op01reg, 2);
+  twi_write(this->address, op_0, (uint8_t*) &op01reg, 2);
 }
 
 /**
@@ -126,11 +126,12 @@ uint16_t pca9555::twi_read(uint8_t address, uint8_t reg)
  */
 void pca9555::twi_write(uint8_t address, uint8_t reg, uint8_t *value, uint8_t len)
 {
-  //
-  // write output register to chip
-  //
-  uint8_t err;
-  uint8_t _reg = reg;
-  err = i2c_write_blocking(i2c_instance, address, &_reg, 1, false);   // setup direction registers
-  err = i2c_write_blocking(i2c_instance, address, value, len, false); // pointer to configuration register address 0
+  uint8_t buffer[3];
+
+  buffer[0] = reg;
+
+  for(int i = 0; i < len; i++)
+      buffer[i+1] = value[i];
+
+  _error = i2c_write_blocking(i2c_instance, address, buffer, len + 1, false);
 }
