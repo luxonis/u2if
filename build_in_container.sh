@@ -7,8 +7,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -e ${DIR}/firmware/source/build ]; then
   rm -rf ${DIR}/firmware/source/build
-  mkdir ${DIR}/firmware/source/build
 fi
+mkdir -p ${DIR}/firmware/source/build
 cd ${DIR}/firmware/source/build
 
 if [ -e ./u2if_CUSTOM_1V8.uf2 ]; then
