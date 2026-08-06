@@ -1,6 +1,7 @@
 #ifndef _INTERFACE_GPIO_H
 #define _INTERFACE_GPIO_H
 
+#include <optional>
 #include "PicoInterfacesBoard.h"
 #include "BaseInterface.h"
 #include "pico/sync.h"
@@ -26,6 +27,7 @@ protected:
 private:
     repeating_timer_t _debounceTimer;
 
+    bool pca9555Exists(i2c_inst_t *i2c, uint8_t address);
     CmdStatus initPinGpio(uint8_t const *cmd);
     CmdStatus initPinExp(uint8_t const *cmd);
     CmdStatus setPinGpio(uint8_t const *cmd);
@@ -34,13 +36,12 @@ private:
     CmdStatus getPinExp(uint8_t const *cmd, uint8_t response[64]);
 
 #ifdef PCA9555_0_ENABLED
-    pca9555 exp0{(PCA9555_0_I2C_INSTANCE == 0 ? i2c0 : i2c1), PCA9555_0_I2C_ADDRESS, PCA9555_0_INT_GPIO};
+    pca9555 exp0;
 #endif
 #ifdef PCA9555_1_ENABLED
-    pca9555 exp1{(PCA9555_1_I2C_INSTANCE == 0 ? i2c0 : i2c1), PCA9555_1_I2C_ADDRESS, PCA9555_1_INT_GPIO};
+    pca9555 exp1;
 #endif
 };
 
 
 #endif
-

@@ -182,7 +182,9 @@ public:
      * @param int_pin_num: pin number of the interrupt gpio (on the mcu)
      * Set to zero if polling
      */
-    pca9555(i2c_inst_t * i2c_instance, uint8_t address, uint8_t int_pin_num);
+    pca9555();
+
+    void init(i2c_inst_t * i2c_instance, uint8_t address, uint8_t int_pin_num);
 
     /**
      * @brief set pins as input or output

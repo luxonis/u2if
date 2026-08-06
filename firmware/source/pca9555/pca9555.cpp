@@ -10,7 +10,12 @@
  * @param address
  * @param int_pin_num set to zero if polling
  */
-pca9555::pca9555(i2c_inst_t * i2c_instance, uint8_t address, uint8_t int_pin_num)
+pca9555::pca9555()
+{
+     
+}
+
+void pca9555::init(i2c_inst_t * i2c_instance, uint8_t address, uint8_t int_pin_num)
 {
   this->i2c_instance = i2c_instance;
   this->address = address;
