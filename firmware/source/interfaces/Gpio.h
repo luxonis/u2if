@@ -1,7 +1,6 @@
 #ifndef _INTERFACE_GPIO_H
 #define _INTERFACE_GPIO_H
 
-#include <optional>
 #include "PicoInterfacesBoard.h"
 #include "BaseInterface.h"
 #include "pico/sync.h"

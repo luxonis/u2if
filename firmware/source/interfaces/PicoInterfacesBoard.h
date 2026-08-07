@@ -202,6 +202,19 @@ namespace Report {
         // | HUB75_WRITE | NB_BYTES[4] L.Endian (WIDTH * HEIGHT)| => First | HUB75_WRITE | CmdStatus::OK|NOK | 
         // ... and after the CDC stream (when transfer to led starting) | HUB75_WRITE | CmdStatus::OK |
         HUB75_WRITE = 0xD2,
+
+        FSYNC_INIT = 0xE0,
+        FSYNC_PROBE = 0xE1,
+        FSYNC_GETPINCAPABILITIES = 0xE2,
+        FSYNC_SETPINCAPABILITIES = 0xE3,
+        FSYNC_GETMODE = 0xE4,
+        FSYNC_SETMODE = 0xE5,
+        FSYNC_GETFPS = 0xE6,
+        FSYNC_SETFPS = 0xE7,
+        FSYNC_GETDUTY = 0xE8,
+        FSYNC_SETDUTY = 0xE9,
+        FSYNC_GETPOLARITY = 0xEA,
+        FSYNC_SETPOLARITY = 0xEB,
     };
 }
 

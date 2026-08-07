@@ -101,6 +101,12 @@ Gpio::Gpio() {
     gpio_pull_up(U2IF_I2C1_SDA);
     gpio_pull_up(U2IF_I2C1_SCL);
 
+    i2c_init(i2c0, 100 * 1000);
+    gpio_set_function(U2IF_I2C0_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(U2IF_I2C0_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(U2IF_I2C0_SDA);
+    gpio_pull_up(U2IF_I2C0_SCL);
+
     // the hardware team made an oopsie woopsie, it lives on one of the two addresses
     uint8_t pca9555_1_addr = PCA9555_1_I2C_ADDRESS;
    
