@@ -146,6 +146,7 @@ public:
     CmdStatus setDuty(uint8_t const *cmd, uint8_t response[64]);
     CmdStatus getPolarity(uint8_t const *cmd, uint8_t response[64]);
     CmdStatus setPolarity(uint8_t const *cmd, uint8_t response[64]);
+    CmdStatus getInputInfo(uint8_t const *cmd, uint8_t response[64]);
 
 private:
     FsyncI2cResult readReg(i2c_inst_t *i2c, uint8_t addr, uint8_t reg);

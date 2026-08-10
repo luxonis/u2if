@@ -21,10 +21,10 @@ CmdStatus FsyncController::process(uint8_t const *cmd, uint8_t response[64])
 {
     CmdStatus status = CmdStatus::NOT_CONCERNED;
 
-    if (Report::ID::FSYNC_GETPINCAPABILITIES <= cmd[0] && cmd[0] <= Report::ID::FSYNC_GETPOLARITY && locked)
+    if (Report::ID::FSYNC_GETPINCAPABILITIES <= cmd[0] && cmd[0] <= Report::ID::FSYNC_GETINPUTINFO && locked)
         unlockFsyncController(); 
 
-    if (Report::ID::FSYNC_GETMODE <= cmd[0] && cmd[0] <= Report::ID::FSYNC_GETPOLARITY && !initok)
+    if (Report::ID::FSYNC_GETMODE <= cmd[0] && cmd[0] <= Report::ID::FSYNC_GETINPUTINFO && !initok)
         return CmdStatus::NOK;
 
     if (cmd[0] == Report::ID::FSYNC_INIT) {
@@ -51,6 +51,8 @@ CmdStatus FsyncController::process(uint8_t const *cmd, uint8_t response[64])
         status = getPolarity(cmd, response);
     } else if (cmd[0] == Report::ID::FSYNC_SETPOLARITY) {
         status = setPolarity(cmd, response);
+    } else if (cmd[0] == Report::ID::FSYNC_GETINPUTINFO) {
+        status = getInputInfo(cmd, response);
     }
 
     return status;
@@ -331,6 +333,35 @@ CmdStatus FsyncController::setPolarity(uint8_t const *cmd, uint8_t response[64])
         return CmdStatus::NOK;
 
     int status = writeReg(fsync_i2c, FSYNC_ADDRESS, CHN_REGISTER_START + chn * REGS_PER_CHN + 1, polarity);
+
+    return status >= 0 ? CmdStatus::OK : CmdStatus::NOK;
+}
+
+/*
+ * response[2] = input present [0, 1]
+ * response[3:7] = input fps
+ * response[7:11] = input duty
+ */
+CmdStatus FsyncController::getInputInfo(uint8_t const *cmd, uint8_t response[64])
+{
+    FsyncI2cResult r;
+    int status = 0;
+
+    r = readReg(fsync_i2c, FSYNC_ADDRESS, IN1_PRESENT_REG);
+    status |= r.status;
+    uint8_t in_present = (uint8_t)r.data;
+
+    r = readReg(fsync_i2c, FSYNC_ADDRESS, IN1_FREQUENCY_REG);
+    status |= r.status;
+    uint32_t in_fps = r.data;
+
+    r = readReg(fsync_i2c, FSYNC_ADDRESS, IN1_DUTY_CYCLE_REG);
+    status |= r.status;
+    uint32_t in_duty = r.data;
+
+    memcpy(response + 2, &in_present, sizeof(in_present));
+    memcpy(response + 2 + sizeof(in_present), &in_fps, sizeof(in_fps));
+    memcpy(response + 2 + sizeof(in_present) + sizeof(in_fps), &in_duty, sizeof(in_duty));
 
     return status >= 0 ? CmdStatus::OK : CmdStatus::NOK;
 }

@@ -215,6 +215,7 @@ namespace Report {
         FSYNC_SETDUTY = 0xE9,
         FSYNC_GETPOLARITY = 0xEA,
         FSYNC_SETPOLARITY = 0xEB,
+        FSYNC_GETINPUTINFO = 0xEC,
     };
 }
 
