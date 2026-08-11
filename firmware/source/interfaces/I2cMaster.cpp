@@ -78,16 +78,32 @@ CmdStatus I2CMaster::task(uint8_t response[64]) {
     return CmdStatus::NOT_FINISHED;
 }
 
+/*
+ * cmd[2:6] = baudrate
+ * cmd[6:10] = sda pin
+ * cmd[10:14] = scl pin
+ */
 CmdStatus I2CMaster::init(uint8_t const *cmd) {
     uint32_t baudrate = convertBytesToUInt32(&cmd[2]);
+    uint32_t sda = convertBytesToUInt32(&cmd[6]);
+    uint32_t scl = convertBytesToUInt32(&cmd[10]);
+
+    gpio_disable_pulls(_sdaGP);
+    gpio_disable_pulls(_sclGP);
+
+    _sdaGP = sda;
+    _sclGP = scl;
+
     //printf("i2c baudrate %d kbaud %d %d %d\n", baudrate, report[2], report[3], sizeof(int));
     i2c_init(_i2cInst, baudrate);
     gpio_set_function(_sdaGP, GPIO_FUNC_I2C);
     gpio_set_function(_sclGP, GPIO_FUNC_I2C);
+
     if(cmd[1]) {
         gpio_pull_up(_sdaGP);
         gpio_pull_up(_sclGP);
     }
+
     setInterfaceState(InterfaceState::INTIALIZED);
     return CmdStatus::OK;
 }
