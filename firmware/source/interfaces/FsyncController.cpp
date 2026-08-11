@@ -394,21 +394,13 @@ FsyncI2cResult FsyncController::readReg(i2c_inst_t *i2c, uint8_t addr, uint8_t r
 int FsyncController::writeReg(i2c_inst_t *i2c, uint8_t addr, uint8_t reg, uint32_t data)
 {
     int rc = 0;
+    uint8_t msg[sizeof(reg) + sizeof(data)] = {reg, data & 0xFF, (data >> 8) & 0xFF, (data >> 16) & 0xFF, (data >> 24) & 0xFF};
 
     rc |= i2c_write_timeout_us(
         i2c,
         addr,
-        &reg,
-        sizeof(reg),
-        true,
-        1000
-    );
-
-    rc |= i2c_write_timeout_us(
-        i2c,
-        addr,
-        (uint8_t *)&data,
-        sizeof(data),
+        (uint8_t *)&msg,
+        sizeof(msg),
         false,
         1000
     );
