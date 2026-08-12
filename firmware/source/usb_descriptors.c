@@ -65,7 +65,7 @@
   #define USB_VID 0xCAFE
   #define USB_PID           (0x4000 | _PID_MAP(CDC, 0) | _PID_MAP(MSC, 1) | _PID_MAP(HID, 2) | \
                             _PID_MAP(MIDI, 3) | _PID_MAP(VENDOR, 4) )
-#elif BOARD == MD6976_R0
+#elif BOARD == MD6976
   #define USB_MFG "Luxonis"
   #define USB_PRD "M8 Controller Box"
   #define USB_VID 0xCAFE

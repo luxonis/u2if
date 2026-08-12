@@ -42,7 +42,7 @@ project(${BUILD_NAME} VERSION "0.6.0")
 pico_sdk_init()
 
 set(BOARD "CUSTOM" CACHE STRING "BaseName chosen by the user at CMake configure time")
-set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY MD6976_R0)
+set_property(CACHE BOARD PROPERTY STRINGS PICO FEATHER ITSYBITSY QTPY QT2040_TRINKEY MD6976)
 message(STATUS "Selected board:'${BOARD}'")
 
 # might help for feather?

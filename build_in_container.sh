@@ -32,9 +32,9 @@ cd ${DIR}/firmware/source/build
 # make -j$(nproc --all)
 # cp ./u2if_SL6945_1V8.uf2 ${DIR}/dist
 
-if [ -e ./u2if_MD6976_R0.uf2 ]; then
-  rm ./u2if_MD6976_R0.uf2
+if [ -e ./u2if_MD6976.uf2 ]; then
+  rm ./u2if_MD6976.uf2
 fi
-cmake .. -DBOARD=MD6976_R0 -DIS_1V8=0
+cmake .. -DBOARD=MD6976 -DIS_1V8=0
 make -j$(nproc --all)
-cp ./u2if_MD6976_R0.uf2 ${DIR}/dist
+cp ./u2if_MD6976.uf2 ${DIR}/dist

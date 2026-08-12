@@ -16,7 +16,7 @@
 #define CUSTOM_1V8      6
 #define CUSTOM_3V3      7
 #define SL6945_1V8      8
-#define MD6976_R0       9
+#define MD6976_R2       9
 
 #define BOARD ${BOARD}
 
@@ -250,7 +250,7 @@
   // HUB75
   #define HUB75_ENABLED  HUB75_ALLOW
 
-#elif BOARD == MD6976_R0
+#elif BOARD == MD6976
   // I2C0
   #define I2C0_ENABLED 1
   #define U2IF_I2C0_SDA 28
